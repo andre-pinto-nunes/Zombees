@@ -24,7 +24,6 @@ int main()
 	sf::Texture background_texture;                             // Création d'une texture
 	background_texture.loadFromFile("background.png");          // Chargement de la texture à partir d'un fichier
 	sf::Sprite background(background_texture);                  // Création d'une forme et application de la texture
-	//background.setScale(0.7, 0.7);                              // Changement de la taille 
 
 
     while (window.isOpen())
@@ -36,23 +35,27 @@ int main()
                 window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){joueur.move( 0, -1);}
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){joueur.move(-1,  0);}
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){joueur.move( 0,  1);}
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){joueur.move( 1,  0);}
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){joueur.move( 0, -1);} // Déplacement vers le haut
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){joueur.move(-1,  0);} // Déplacement vers la gauche
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){joueur.move( 0,  1);} // Déplacement vers le bas
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){joueur.move( 1,  0);} // Déplacement vers la droite
+        abeille.setPosition(joueur.get_x(), joueur.get_y());    // Mise à jour du positionnement de l'abeille
 
+
+        // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
         if (animation++ == 15)
         {
-			abeille.setTextureRect(sf::IntRect(50, -5, 50, 50));
-        }else if(animation == 30) {
-			abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));
-        	animation = 0;
+			abeille.setTextureRect(sf::IntRect(50, -5, 50, 50)); // on compte 15 frames avant de changer l'affichage de l'abeille
+        }
+        else if(animation == 30)
+        {
+			abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));  // on compte encore 15 frames avant de changer l'affichage de l'abeille
+        	animation = 0;                                      // Remise à 0 du compteur
         }
 
-        window.clear(sf::Color(255, 255, 255, 255));
-        abeille.setPosition(joueur.get_x(), joueur.get_y());
-        window.draw(background);
-        window.draw(abeille);
+        window.clear(sf::Color(255, 255, 255, 255));            // Netoyage de la fenêtre
+        window.draw(background);                                // Affichage du Fond d'écran
+        window.draw(abeille);                                   // Affichage de l'abeille
         window.display();
     }
 
