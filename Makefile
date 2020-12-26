@@ -18,4 +18,4 @@ $(EXEC): $(OBJ)
 -include .depends
 
 clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -f $(OBJ) ZomBee
