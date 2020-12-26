@@ -10,20 +10,22 @@ int main()
     Abeille joueur;
 
     // Création de la fenêtre
-    sf::RenderWindow window(sf::VideoMode(800, 600, 28), "ZomBee");
-    window.setFramerateLimit(30);
+    sf::RenderWindow window(sf::VideoMode(400, 800), "ZomBee"); // Création d'une fenêtre 800x600 , nom = ZomBee      
+    window.setFramerateLimit(30);                               // FPS = 30
 
-	sf::Texture image_texture;
-	image_texture.loadFromFile("1beille.png");
-	sf::Sprite abeille(image_texture);
-	abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));
+    // Affichage de l'abeille
+	sf::Texture image_texture;                                  // Création d'une texture
+	image_texture.loadFromFile("1beille.png");                  // Chargement de la texture à partir d'un fichier
+	sf::Sprite abeille(image_texture);                          // Création d'une forme et application de la texture
+	abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));          // Découpage d'une partie spécifique de la texture (premier photogramme)
 
 
 
-	sf::Texture background_texture;
-	background_texture.loadFromFile("background.png");
-	sf::Sprite background(background_texture);
-	background.setScale(0.7, 0.7);
+	sf::Texture background_texture;                             // Création d'une texture
+	background_texture.loadFromFile("background.png");          // Chargement de la texture à partir d'un fichier
+	sf::Sprite background(background_texture);                  // Création d'une forme et application de la texture
+	//background.setScale(0.7, 0.7);                              // Changement de la taille 
+
 
     while (window.isOpen())
     {
@@ -47,7 +49,7 @@ int main()
         	animation = 0;
         }
 
-        //window.clear(sf::Color(255, 255, 255, 255));
+        window.clear(sf::Color(255, 255, 255, 255));
         abeille.setPosition(joueur.get_x(), joueur.get_y());
         window.draw(background);
         window.draw(abeille);
