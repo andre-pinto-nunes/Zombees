@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include "Abeille.cc"
+#include "Abeille_Normale.hh"
+#include "Abeille_Zombie.hh"
 
 int main()
 {
@@ -7,7 +8,7 @@ int main()
 	int animation = 0;
 
     // Création d'une abeille (mettre des STL)
-    Abeille joueur;
+    Abeille_Normale joueur;
 
     // Création de la fenêtre
     sf::RenderWindow window(sf::VideoMode(400, 800), "ZomBee"); // Création d'une fenêtre 800x600 , nom = ZomBee      
@@ -15,7 +16,7 @@ int main()
 
     // Affichage de l'abeille
 	sf::Texture image_texture;                                  // Création d'une texture
-	image_texture.loadFromFile("1beille.png");                  // Chargement de la texture à partir d'un fichier
+	image_texture.loadFromFile(joueur.get_texture());           // Chargement de la texture à partir d'un fichier
 	sf::Sprite abeille(image_texture);                          // Création d'une forme et application de la texture
 	abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));          // Découpage d'une partie spécifique de la texture (premier photogramme)
 
@@ -45,11 +46,11 @@ int main()
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
         if (animation++ == 15)
         {
-			abeille.setTextureRect(sf::IntRect(50, -5, 50, 50)); // on compte 15 frames avant de changer l'affichage de l'abeille
+			abeille.setTextureRect(sf::IntRect(50, 0, 50, 43)); // on compte 15 frames avant de changer l'affichage de l'abeille
         }
         else if(animation == 30)
         {
-			abeille.setTextureRect(sf::IntRect(0, 0, 50, 50));  // on compte encore 15 frames avant de changer l'affichage de l'abeille
+			abeille.setTextureRect(sf::IntRect( 0, 0, 50, 43));  // on compte encore 15 frames avant de changer l'affichage de l'abeille
         	animation = 0;                                      // Remise à 0 du compteur
         }
 

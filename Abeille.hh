@@ -9,9 +9,11 @@ class Abeille {
 
 		int get_x() const {return position_x;}
 		int get_y() const {return position_y;}
+		
+		std::string get_texture() const {return texture;}
 
 	
-	private:
+	protected:
 
 		int position_x;
 		int position_y;

@@ -8,7 +8,7 @@ EXEC = main
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) $@.o -o ZomBee $(LIBFLAGS)  
+	$(CC) $^ -o ZomBee $(LIBFLAGS)  
 
 %.o: %.cc
 	$(CC) $(CCFLAGS) -c $<
