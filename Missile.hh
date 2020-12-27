@@ -3,19 +3,19 @@
 
 class Missile {
 	public:
-		//Missile();
+		// direction = +1 ou -1
 		Missile(int x, int y, int dir);
+		Missile(const Missile& m) : Missile(m.position_x, m.position_y, m.direction){};
 		~Missile(){};
+
 		void move();
 
 		int get_x() const {return position_x;}
 		int get_y() const {return position_y;}
-
-		bool operator <(const Missile &rhs) const {return id <= rhs.id;}
+		int get_dir() const {return direction;}
 
 	
 	private:
-		int static id;
 		int position_x;
 		int position_y;
 		int vitesse;

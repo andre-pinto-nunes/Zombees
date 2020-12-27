@@ -11,15 +11,21 @@ int main()
     // Compteur de frames pour l'animation
 	int animation = 0;
 
+    // Compteur de frames pour la vitesse de tir
+    int cooldown_tir = 1;
+
+    int const taille_fenetre_X = 400;
+    int const taille_fenetre_Y = 800;
+
     // Ensemble des missiles dans le jeu
-    std::map<Missile, sf::Sprite> map_des_missiles;
+    std::vector<std::pair<Missile, sf::Sprite>> map_des_missiles;
 
     // Création d'une abeille (mettre des STL)
     Abeille_Normale joueur;
 
     // Création de la fenêtre
-    sf::RenderWindow window(sf::VideoMode(400, 800), "ZomBee"); // Création d'une fenêtre 800x600 , nom = ZomBee      
-    window.setFramerateLimit(30);                               // FPS = 30
+    sf::RenderWindow window(sf::VideoMode(taille_fenetre_X, taille_fenetre_Y), "ZomBee"); // Création d'une fenêtre 400x800 , nom = ZomBee      
+    window.setFramerateLimit(30);                                                         // FPS = 30
 
     // Affichage de l'abeille
 	sf::Texture image_texture;                                  // Création d'une texture
@@ -35,8 +41,8 @@ int main()
 
 
 
-    sf::Texture missile_texture;                             // Création d'une texture
-    missile_texture.loadFromFile("missile.png");          // Chargement de la texture à partir d'un fichier
+    sf::Texture missile_texture;                                // Création d'une texture
+    missile_texture.loadFromFile("missile.png");                // Chargement de la texture à partir d'un fichier
 
 
     while (window.isOpen())
@@ -48,14 +54,16 @@ int main()
                 window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){joueur.move( 0, -1);} // Déplacement vers le haut
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){joueur.move(-1,  0);} // Déplacement vers la gauche
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){joueur.move( 0,  1);} // Déplacement vers le bas
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){joueur.move( 1,  0);} // Déplacement vers la droite
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) and joueur.get_y() > 0){joueur.move( 0, -1);}                     // Déplacement vers le haut
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) and joueur.get_x() > 0){joueur.move(-1,  0);}                     // Déplacement vers la gauche
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) and joueur.get_y() < taille_fenetre_Y - 50){joueur.move( 0,  1);} // Déplacement vers le bas
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) and joueur.get_x() < taille_fenetre_X - 50){joueur.move( 1,  0);} // Déplacement vers la droite
         abeille.setPosition(joueur.get_x(), joueur.get_y());    // Mise à jour du positionnement de l'abeille
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            map_des_missiles.insert(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 17,joueur.get_y(),1), sf::Sprite(missile_texture)));
+        // Lancement d'un dard
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
+            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 17,joueur.get_y(),-1), sf::Sprite(missile_texture)));
+            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
         }
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
@@ -69,15 +77,18 @@ int main()
         	animation = 0;                                      // Remise à 0 du compteur
         }
 
+
+
         window.clear(sf::Color(255, 255, 255, 255));            // Netoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
 
-        for (std::map<Missile, sf::Sprite>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
+        // Affichage des Missiles
+        for (std::vector<std::pair<Missile, sf::Sprite>>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
         {
-            (i->second).setRotation(180.f);    
+            (i->second).setRotation(((i->first).get_dir() - 1) *90);    
             (i->second).setPosition((i->first).get_x()+17, (i->first).get_y());    // Mise à jour du positionnement de l'abeille
+            (i->first).move();
             window.draw(i->second);
-            //(i->first).move();
         }
         
         window.draw(abeille);                                   // Affichage de l'abeille

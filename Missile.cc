@@ -1,17 +1,9 @@
 #include "Missile.hh"
 
-/*
-Missile::Missile(){
-	position_x = 100;
-	position_y = 100;
-	vitesse = 8;
-}
-*/
-
 Missile::Missile(int x, int y, int dir){
 	position_x = x;
 	position_y = y;
-	vitesse = 8;
+	vitesse = 10;
 	direction = dir;
 }
 

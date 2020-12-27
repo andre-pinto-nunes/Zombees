@@ -4,6 +4,7 @@ Abeille::Abeille(){
 	position_x = 100;
 	position_y = 100;
 	points_de_vie = 100;
+	vitesse_de_attaque = 15; // max = 30
 	vitesse = 8;
 }
 
