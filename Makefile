@@ -1,5 +1,5 @@
 CC = g++
-CCFLAGS = -Wall -Werror 
+CCFLAGS = -Wall  
 LIBFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 SRC= $(wildcard *.cc)
 OBJ= $(SRC:.cc=.o)

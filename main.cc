@@ -1,11 +1,18 @@
 #include <SFML/Graphics.hpp>
+#include <set>
+#include <vector>
+//#pragma gcc diagnostic ignored -Wtautological-compare
 #include "Abeille_Normale.hh"
 #include "Abeille_Zombie.hh"
+#include "Missile.hh"
 
 int main()
 {
     // Compteur de frames pour l'animation
 	int animation = 0;
+
+    // Ensemble des missiles dans le jeu
+    std::map<Missile, sf::Sprite> map_des_missiles;
 
     // Création d'une abeille (mettre des STL)
     Abeille_Normale joueur;
@@ -22,9 +29,14 @@ int main()
 
 
 
-	sf::Texture background_texture;                             // Création d'une texture
-	background_texture.loadFromFile("background.png");          // Chargement de la texture à partir d'un fichier
-	sf::Sprite background(background_texture);                  // Création d'une forme et application de la texture
+    sf::Texture background_texture;                             // Création d'une texture
+    background_texture.loadFromFile("background.png");          // Chargement de la texture à partir d'un fichier
+    sf::Sprite background(background_texture);                  // Création d'une forme et application de la texture
+
+
+
+    sf::Texture missile_texture;                             // Création d'une texture
+    missile_texture.loadFromFile("missile.png");          // Chargement de la texture à partir d'un fichier
 
 
     while (window.isOpen())
@@ -42,6 +54,9 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){joueur.move( 1,  0);} // Déplacement vers la droite
         abeille.setPosition(joueur.get_x(), joueur.get_y());    // Mise à jour du positionnement de l'abeille
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+            map_des_missiles.insert(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x(),joueur.get_y(),1), sf::Sprite(missile_texture)));
+        }
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
         if (animation++ == 15)
@@ -56,6 +71,13 @@ int main()
 
         window.clear(sf::Color(255, 255, 255, 255));            // Netoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
+
+        for (std::map<Missile, sf::Sprite>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
+        {
+            (i->second).setPosition((i->first).get_x(), (i->first).get_y());    // Mise à jour du positionnement de l'abeille
+            window.draw(i->second);
+        }
+        
         window.draw(abeille);                                   // Affichage de l'abeille
         window.display();
     }
