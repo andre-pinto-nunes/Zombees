@@ -1,7 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <set>
 #include <vector>
-//#pragma gcc diagnostic ignored -Wtautological-compare
 #include "Abeille_Normale.hh"
 #include "Abeille_Zombie.hh"
 #include "Missile.hh"
@@ -54,11 +52,12 @@ int main()
                 window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) and joueur.get_y() > 0){joueur.move( 0, -1);}                     // Déplacement vers le haut
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) and joueur.get_x() > 0){joueur.move(-1,  0);}                     // Déplacement vers la gauche
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) and joueur.get_y() < taille_fenetre_Y - 50){joueur.move( 0,  1);} // Déplacement vers le bas
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) and joueur.get_x() < taille_fenetre_X - 50){joueur.move( 1,  0);} // Déplacement vers la droite
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)    and joueur.get_y() > 0){joueur.move( 0, -1);}                     // Déplacement vers le haut
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)  and joueur.get_x() > 0){joueur.move(-1,  0);}                     // Déplacement vers la gauche
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)  and joueur.get_y() < taille_fenetre_Y - 50){joueur.move( 0,  1);} // Déplacement vers le bas
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) and joueur.get_x() < taille_fenetre_X - 50){joueur.move( 1,  0);} // Déplacement vers la droite
         abeille.setPosition(joueur.get_x(), joueur.get_y());    // Mise à jour du positionnement de l'abeille
+
 
         // Lancement d'un dard
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){

@@ -21,5 +21,5 @@ class Abeille {
 		int points_de_vie;
 		int vitesse;
 		int vitesse_de_attaque;
-		std::string texture; //différente si c'est un zombie ou une abeille normale
+		std::string texture;
 };
