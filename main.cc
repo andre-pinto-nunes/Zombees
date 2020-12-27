@@ -55,7 +55,7 @@ int main()
         abeille.setPosition(joueur.get_x(), joueur.get_y());    // Mise à jour du positionnement de l'abeille
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            map_des_missiles.insert(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x(),joueur.get_y(),1), sf::Sprite(missile_texture)));
+            map_des_missiles.insert(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 17,joueur.get_y(),1), sf::Sprite(missile_texture)));
         }
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
@@ -74,8 +74,10 @@ int main()
 
         for (std::map<Missile, sf::Sprite>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
         {
-            (i->second).setPosition((i->first).get_x(), (i->first).get_y());    // Mise à jour du positionnement de l'abeille
+            (i->second).setRotation(180.f);    
+            (i->second).setPosition((i->first).get_x()+17, (i->first).get_y());    // Mise à jour du positionnement de l'abeille
             window.draw(i->second);
+            //(i->first).move();
         }
         
         window.draw(abeille);                                   // Affichage de l'abeille
