@@ -81,9 +81,16 @@ int main()
         window.clear(sf::Color(255, 255, 255, 255));            // Netoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
 
+
         // Affichage des Missiles
         for (std::vector<std::pair<Missile, sf::Sprite>>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
         {
+        	if ((i->first).get_y() < -10 || (i->first).get_y() > taille_fenetre_Y)
+        	{
+        		map_des_missiles.erase(i);
+        		i--;
+        		continue;
+        	}
             (i->second).setRotation(((i->first).get_dir() - 1) *90);    
             (i->second).setPosition((i->first).get_x()+17, (i->first).get_y());    // Mise à jour du positionnement de l'abeille
             (i->first).move();
