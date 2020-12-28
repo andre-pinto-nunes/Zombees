@@ -1,12 +1,13 @@
 #include "Abeille.hh"
 
-Abeille::Abeille(){
-	position_x = 176;
-	position_y = 756;
-	points_de_vie = 100;
-	vitesse_de_attaque = 15; // max = 30
-	vitesse = 8;
+Abeille::Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd){
+	position_x = x;
+	position_y = y;
+	points_de_vie = pv;
+	vitesse_de_attaque = atk_spd; // max = 30
+	vitesse = mvmt_spd;
 }
+
 
 void Abeille::move(int x, int y){
 	if (x<0)

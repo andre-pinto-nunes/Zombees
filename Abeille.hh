@@ -3,7 +3,8 @@
 
 class Abeille {
 	public:
-		Abeille();
+		Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd);
+		Abeille() : Abeille(176, 756, 100, 15, 8){};
 		~Abeille(){};
 		void move(int x, int y);
 
