@@ -17,5 +17,8 @@ $(EXEC): $(OBJ)
 	g++ $(CCFLAGS) -MM $(SRC) > .depends
 -include .depends
 
+recompile: clean all
+	./ZomBee
+	
 clean:
 	rm -f $(OBJ) ZomBee
