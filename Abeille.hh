@@ -6,9 +6,10 @@
 class Abeille {
 	public:
 		Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg);
-		Abeille() : Abeille(176, 756, 100, 15, 8, 10){};
+		Abeille() : Abeille(200, 752, 100, 15, 8, 10){};
 		~Abeille(){};
 
+		virtual void move()=0;
 		void move(int x, int y);
 		void animate(int anim);
 
@@ -32,8 +33,8 @@ class Abeille {
 		bool operator==(Abeille const& a) const;
 		bool operator==(Missile const& a) const;
 
-	protected:
 
+	protected:
 		int position_x;
 		int position_y;
 		int points_de_vie;

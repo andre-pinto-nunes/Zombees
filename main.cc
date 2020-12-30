@@ -27,10 +27,10 @@ int main()
     std::vector<std::pair<Missile, sf::Sprite>> map_des_missiles;
 
     // Ensemble des abeilles dans le jeu
-    std::vector<std::deque<Abeille>> map_des_abeilles;
+    std::vector<std::deque<Abeille_Zombie>> map_des_abeilles;
 				
     for (int i = 0; i < 8; ++i){
-    	std::deque<Abeille> deque;
+    	std::deque<Abeille_Zombie> deque;
     	deque.push_back(Abeille_Zombie_Super(50 + i*50, 50));
 
     	for (int j = 0; j < 3; ++j){
@@ -49,14 +49,38 @@ int main()
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 	// Fond d'écran
-    sf::Texture background_texture;                             // Création d'une texture
-    background_texture.loadFromFile("background.png");          // Chargement de la texture à partir d'un fichier
-    sf::Sprite background(background_texture);                  // Création d'une forme et application de la texture
+    sf::Texture background_texture;                       // Création d'une texture
+    background_texture.loadFromFile("background.png");    // Chargement de la texture à partir d'un fichier
+    sf::Sprite background(background_texture);            // Création d'une forme et application de la texture
 
-    sf::Texture missile_texture;                                // Création d'une texture
-    missile_texture.loadFromFile("missile.png");                // Chargement de la texture à partir d'un fichier
+    sf::Texture missile_texture;                          // Création d'une texture
+    missile_texture.loadFromFile("missile.png");          // Chargement de la texture à partir d'un fichier
 
 
+	// Victoire
+    sf::Texture victoire_texture;                         // Création d'une texture
+    victoire_texture.loadFromFile("victoire.png");        // Chargement de la texture à partir d'un fichier
+    sf::Sprite victoire(victoire_texture);                // Création d'une forme et application de la texture
+    victoire.setPosition(25, 350);
+
+
+	// Défaite
+    sf::Texture defaite_texture;                          // Création d'une texture
+    defaite_texture.loadFromFile("defaite.png");          // Chargement de la texture à partir d'un fichier
+    sf::Sprite defaite(defaite_texture);                  // Création d'une forme et application de la texture
+    defaite.setPosition(25, 350);
+
+	// Traître
+    sf::Texture traitre_texture;                          // Création d'une texture
+    traitre_texture.loadFromFile("traitre_v2.png");          // Chargement de la texture à partir d'un fichier
+    sf::Sprite traitre(traitre_texture);                  // Création d'une forme et application de la texture
+    traitre.setPosition(0, 310);
+    
+
+    bool fin_alternative = 1;
+    
+    int jeu_fini = 0;
+    
     while (window.isOpen())
     {
         sf::Event event;
@@ -66,17 +90,18 @@ int main()
                 window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)    and joueur.get_y() > 0){joueur.move( 0, -1);}                     // Déplacement vers le haut
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)  and joueur.get_x() > 0){joueur.move(-1,  0);}                     // Déplacement vers la gauche
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)  and joueur.get_y() < taille_fenetre_Y - 50){joueur.move( 0,  1);} // Déplacement vers le bas
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) and joueur.get_x() < taille_fenetre_X - 50){joueur.move( 1,  0);} // Déplacement vers la droite
+        if (!jeu_fini){
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)    and joueur.get_y() > - 50){joueur.move( 0, -1);}                     // Déplacement vers le haut
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)  and joueur.get_x() > 0){joueur.move(-1,  0);}                     // Déplacement vers la gauche
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)  and joueur.get_y() < taille_fenetre_Y - 50){joueur.move( 0,  1);} // Déplacement vers le bas
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) and joueur.get_x() < taille_fenetre_X - 50){joueur.move( 1,  0);} // Déplacement vers la droite
 
-        // Lancement d'un dard
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
-            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
-            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
-        }
-
+	        // Lancement d'un dard
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
+	            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
+	            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
+	        }
+	    }
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
         if (animation++ == 30) animation = 0;
 
@@ -103,11 +128,12 @@ int main()
         }
 
         // Affichage des abeilles
-        for (std::vector<std::deque<Abeille>>::iterator i = map_des_abeilles.begin(); i != map_des_abeilles.end(); ++i)
+        for (std::vector<std::deque<Abeille_Zombie>>::iterator i = map_des_abeilles.begin(); i != map_des_abeilles.end(); ++i)
         {
-        	for (std::deque<Abeille>::iterator j = i->begin(); j != i->end(); ++j)
+        	for (std::deque<Abeille_Zombie>::iterator j = i->begin(); j != i->end(); ++j)
         	{
-	            j->animate(animation);    	
+	            j->animate(animation);
+	            if (!jeu_fini) j->move();
 	            j->update_pos();
 	            j->update_tex();	
 		    	window.draw(j->get_sprite());                                   // Affichage de l'abeille
@@ -117,7 +143,7 @@ int main()
 						À CHANGER
 						(ici on tue des zombies si on les touche)
 						(il faut que le joueur perde le jeu si il les touche)
-	            	*/
+	            	
 	            	if ( j == (i->begin()))
 	            	{
 	            		i->pop_front();
@@ -126,6 +152,8 @@ int main()
 	            	i->erase(j);
 	            	j--;
 	            	continue;
+	            	*/
+	            	jeu_fini = 2;
 	            }
 
 	            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
@@ -135,13 +163,16 @@ int main()
     					// Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
     					j->perte_points_de_vie((k->first).get_dmg());
 
+
     					// Si un missile touche un enemi, le missile disparait
     					map_des_missiles.erase(k);
     					k--;
 
-    					////////////////////// IL Y A UN SEG FAULT PAR ICI DES FOIS
     					if (j->dead())
     					{
+
+	    					fin_alternative = 0;
+
 	    					if ( j == (i->begin()))
 			            	{
 			            		i->pop_front();
@@ -154,13 +185,45 @@ int main()
     				}
 		        }
         	}
+
+        	if (i->empty())
+        	{/*
+				if ( i == (map_des_abeilles.begin()))
+            	{
+            		map_des_abeilles.pop_front();
+            		break;
+            	}*/
+            	map_des_abeilles.erase(i);
+            	i--;
+            	break;
+        	}
+        	if (i->empty())
+        	{
+        		/* code */
+        	}
         }
-        
+
+        if (map_des_abeilles.empty()) jeu_fini = 1;
+
+    	if (jeu_fini == 1){
+	        window.draw(victoire);
+    	}else if(jeu_fini == 2){
+	        window.draw(defaite); 
+        }
+
+        // Si le joueur arrive à s'enfuir sans tuer aucune abeille, il gagne
+        if(joueur.get_y() < -50 && fin_alternative){
+	        window.draw(victoire); 
+	        window.draw(traitre);
+	        jeu_fini = 3;
+        }
+
         window.draw(joueur.get_sprite());                                   // Affichage de l'abeille
         window.display();
     }
 
-
+    map_des_abeilles.clear();
+    map_des_missiles.clear();
     return 0;
 }
 

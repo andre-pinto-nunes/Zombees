@@ -18,5 +18,7 @@ class Abeille_Normale : public Abeille{
 			update_pos();
 		};
 
+		void move(){printf("rien\n");};
+
 
 };

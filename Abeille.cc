@@ -7,8 +7,7 @@ Abeille::Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg){
 	points_de_vie_max = pv;
 	vitesse_de_attaque = atk_spd; // max = 30
 	vitesse = mvmt_spd;
-	degats = dmg;
-
+	degats = 100;
 	anim = 0;
 	anim1 = sf::IntRect(50, 0, 50, 43);
     anim2 = sf::IntRect(0, 0, 50, 43);
@@ -130,6 +129,7 @@ bool Abeille::operator==(Missile const& a) const{
 	}
 	return 1;
 }
+
 
 void Abeille::perte_points_de_vie(int dmg){
 	points_de_vie -= dmg;
