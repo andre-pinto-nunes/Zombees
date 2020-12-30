@@ -20,6 +20,7 @@ class Abeille {
 
 		void update_pos();
 		void update_tex();
+		void update_pv();
 
 		bool dead(){return !points_de_vie;};
 
@@ -36,6 +37,7 @@ class Abeille {
 		int position_x;
 		int position_y;
 		int points_de_vie;
+		int points_de_vie_max;
 		int vitesse;
 		int degats;
 		int vitesse_de_attaque;

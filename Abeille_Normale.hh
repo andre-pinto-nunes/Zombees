@@ -5,10 +5,10 @@
 class Abeille_Normale : public Abeille{
 	public:
 		Abeille_Normale() : Abeille(){
-			texture.loadFromFile("abeille.png");           // Chargement de la texture à partir d'un fichier
+			texture.loadFromFile("abeille_HP.png");           // Chargement de la texture à partir d'un fichier
 			sprite = sf::Sprite(texture);
 			sprite.setPosition(position_x, position_y);
-			str_texture = "abeille.png";
+			str_texture = "abeille_HP.png";
 			rotation = 0;
 		};
 		~Abeille_Normale(){};

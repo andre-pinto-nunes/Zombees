@@ -4,6 +4,7 @@ Abeille::Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg){
 	position_x = x;
 	position_y = y;
 	points_de_vie = pv;
+	points_de_vie_max = pv;
 	vitesse_de_attaque = atk_spd; // max = 30
 	vitesse = mvmt_spd;
 	degats = dmg;
@@ -31,10 +32,38 @@ void Abeille::move(int x, int y){
 }
 
 void Abeille::animate(int anim) {
+	update_pv();
 	if (anim < 15){
 		sprite.setTextureRect(anim1);
 	}else{
 		sprite.setTextureRect(anim2);
+	}
+}
+void Abeille::update_pv(){
+	 if (points_de_vie < points_de_vie_max/5)
+	{
+		anim1 = sf::IntRect(50, 215, 50, 43);
+    	anim2 = sf::IntRect(0,  215, 50, 43);
+	} else if (points_de_vie < 2*points_de_vie_max/5)
+	{
+		anim1 = sf::IntRect(50, 172, 50, 43);
+    	anim2 = sf::IntRect(0,  172, 50, 43);
+	} else if (points_de_vie < 3*points_de_vie_max/5)
+	{
+		anim1 = sf::IntRect(50, 129, 50, 43);
+    	anim2 = sf::IntRect(0,  129, 50, 43);
+	} else if (points_de_vie < 4*points_de_vie_max/5)
+	{
+		anim1 = sf::IntRect(50, 86, 50, 43);
+    	anim2 = sf::IntRect(0,  86, 50, 43);
+	} else if (points_de_vie < points_de_vie_max)
+	{
+		anim1 = sf::IntRect(50, 43, 50, 43);
+    	anim2 = sf::IntRect(0,  43, 50, 43);
+	} else
+	{
+		anim1 = sf::IntRect(50, 0, 50, 43);
+    	anim2 = sf::IntRect(0,  0, 50, 43);
 	}
 }
 
