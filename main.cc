@@ -20,8 +20,8 @@ int main()
     // Compteur de frames pour la vitesse de tir
     int cooldown_tir = 1;
 
-    int const taille_fenetre_X = 400;
-    int const taille_fenetre_Y = 800;
+    int const taille_fenetre_X = 450;
+    int const taille_fenetre_Y = 850;
 
     // Ensemble des missiles dans le jeu
     std::vector<std::pair<Missile, sf::Sprite>> map_des_missiles;
@@ -73,7 +73,7 @@ int main()
 
         // Lancement d'un dard
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
-            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 17,joueur.get_y(),-1), sf::Sprite(missile_texture)));
+            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
             cooldown_tir = 30/joueur.get_vitesse_de_attaque();
         }
 
@@ -96,8 +96,8 @@ int main()
         		continue;
         	}
 
-            (i->second).setRotation(((i->first).get_dir() - 1) *90);    			// Rotation de 180º des missiles de direction -1
-            (i->second).setPosition((i->first).get_x()+17, (i->first).get_y());    	// Mise à jour de la position du missile
+            (i->second).setRotation((i->first).get_rot());    			// Rotation de 180º des missiles de direction -1
+            (i->second).setPosition((i->first).get_x(), (i->first).get_y());    	// Mise à jour de la position du missile
             (i->first).move();														// Deplacement du missile à chaque frame
             window.draw(i->second);													// Affichage du missile
         }
@@ -105,14 +105,19 @@ int main()
         // Affichage des abeilles
         for (std::vector<std::deque<Abeille>>::iterator i = map_des_abeilles.begin(); i != map_des_abeilles.end(); ++i)
         {
-        	for (std::deque<Abeille>::iterator j = (*i).begin(); j != (*i).end(); ++j)
+        	for (std::deque<Abeille>::iterator j = i->begin(); j != i->end(); ++j)
         	{
 	            j->animate(animation);    	
 	            j->update_pos();
 	            j->update_tex();	
 		    	window.draw(j->get_sprite());                                   // Affichage de l'abeille
-	            if ((*j) == joueur)
-	            {
+	            if (*j == joueur)
+	            { 
+	            	/*
+						À CHANGER
+						(ici on tue des zombies si on les touche)
+						(il faut que le joueur perde le jeu si il les touche)
+	            	*/
 	            	if ( j == (i->begin()))
 	            	{
 	            		i->pop_front();
@@ -122,6 +127,32 @@ int main()
 	            	j--;
 	            	continue;
 	            }
+
+	            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
+    			{
+    				if (*j == k->first)
+    				{
+    					// Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
+    					j->perte_points_de_vie((k->first).get_dmg());
+
+    					// Si un missile touche un enemi, le missile disparait
+    					map_des_missiles.erase(k);
+    					k--;
+
+    					////////////////////// IL Y A UN SEG FAULT PAR ICI DES FOIS
+    					if (j->dead())
+    					{
+	    					if ( j == (i->begin()))
+			            	{
+			            		i->pop_front();
+			            		continue;
+			            	}
+			            	i->erase(j);
+			            	j--;
+			            	continue;
+    					}
+    				}
+		        }
         	}
         }
         

@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Missile.hh"
 #include <string>
 
 class Abeille {
 	public:
-		Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd);
-		Abeille() : Abeille(176, 756, 100, 15, 8){};
+		Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg);
+		Abeille() : Abeille(176, 756, 100, 15, 8, 10){};
 		~Abeille(){};
 
 		void move(int x, int y);
@@ -13,16 +14,22 @@ class Abeille {
 
 		int get_x() const;
 		int get_y() const;
+		int get_degats() const;
 		int get_rotation() const;
 		int get_vitesse_de_attaque() const;
 
 		void update_pos();
 		void update_tex();
 
+		bool dead(){return !points_de_vie;};
+
+		void perte_points_de_vie(int dmg);
+
 		std::string get_texture() const;
 		sf::Sprite get_sprite() const;
 
 		bool operator==(Abeille const& a) const;
+		bool operator==(Missile const& a) const;
 
 	protected:
 
@@ -30,6 +37,7 @@ class Abeille {
 		int position_y;
 		int points_de_vie;
 		int vitesse;
+		int degats;
 		int vitesse_de_attaque;
 		std::string str_texture;
 

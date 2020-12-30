@@ -1,15 +1,16 @@
 #include "Missile.hh"
 
-Missile::Missile(int x, int y, int dir){
+Missile::Missile(int x, int y, int rot, int dmg){
 	position_x = x;
 	position_y = y;
 	vitesse = 10;
-	direction = dir;
+	degats = dmg;
+	rotation = rot;
 }
 
 
 void Missile::move(){
-	if (direction<0)
+	if (rotation==180)
 	{
 		position_y -= vitesse;
 	}else{
