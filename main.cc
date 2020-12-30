@@ -145,11 +145,11 @@ int main()
 	    					if ( j == (i->begin()))
 			            	{
 			            		i->pop_front();
-			            		continue;
+			            		break;
 			            	}
 			            	i->erase(j);
 			            	j--;
-			            	continue;
+			            	break;
     					}
     				}
 		        }
