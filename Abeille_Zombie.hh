@@ -15,10 +15,11 @@ class Abeille_Zombie : public Abeille{
 			else if (compteur_mouvement == range) {position_y += 8;}
 			else if (compteur_mouvement == range*2){
 				compteur_mouvement = 0;
-				//position_x--;
 				position_y += 8;
 			}
-			else {position_x--;}
+			else {
+				position_x--;
+			}
 
 		}
 

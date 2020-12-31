@@ -84,16 +84,21 @@ int main()
     // Indique si le jeu est fini: 0 - pas fini ; 1 - victoire ; 2 - défaite
     int jeu_fini = 0;
     
+    // Booléen : indique si la fenêtre est sélectionnée
+    bool focus = true;
+    
     while (window.isOpen())
     {
         sf::Event event;
         if (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) window.close();
+            if (event.type == sf::Event::GainedFocus)	focus = true;
+        	if (event.type == sf::Event::LostFocus)		focus = false;
         }
 
         // Tant que le jeu n'est pas fini, le joueur peut contrôler l'abeille
-        if (!jeu_fini){
+        if (!jeu_fini && focus){
 
         	// Déplacements
 	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)    and joueur.get_y() > - 50)					joueur.move( 0, -1); // Déplacement vers le haut
@@ -107,7 +112,6 @@ int main()
 	            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
 	        }
 	    }
-
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
         if (animation++ == 30) animation = 0;
@@ -144,7 +148,6 @@ int main()
 	            j->update_pos();													// Mise à jour de la position du sprite
 	            j->update_tex();													// Mise à jour de la texture
 		    	window.draw(j->get_sprite());                                   	// Affichage de l'abeille
-	            
 	            if (*j == joueur)	jeu_fini = 2;									// Si le joueur touche un zombie, il perd
 
             	/*
@@ -201,7 +204,6 @@ int main()
         	{
             	map_des_abeilles.erase(i);
             	i--;
-            	break;
         	}
         }
 
