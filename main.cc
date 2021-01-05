@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <vector>
 #include <deque>
 #include <iostream>
@@ -12,6 +14,14 @@ int main()
 
     sf::Image icon;
 	icon.loadFromFile("img/beewan.png");
+
+	// Son missile
+	sf::SoundBuffer missilebuffer;
+    missilebuffer.loadFromFile("missile.wav");
+
+    sf::Sound sound;
+	sound.setBuffer(missilebuffer);
+	
 
     // Compteur de frames pour l'animation
 	int animation = 0;
@@ -110,6 +120,7 @@ int main()
 	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
 	            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
 	            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
+	            sound.play();
 	        }
 	    }
 

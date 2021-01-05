@@ -1,6 +1,6 @@
 CC = g++
 CCFLAGS = -Wall  
-LIBFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LIBFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 SRC= $(wildcard *.cc)
 OBJ= $(SRC:.cc=.o)
 EXEC = main
