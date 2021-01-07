@@ -1,24 +1,11 @@
 #pragma once
-#include <string>
+#include <SFML/Graphics.hpp>
+#include "Projectile.hh"
 
-class Missile {
+class Missile : public Projectile {
 	public:
-		Missile(int x, int y, int dir, int dmg);
+		Missile(int x, int y, int rot, int dmg) : Projectile(x, y, 10, rot, dmg, 100) {}; // vitesse de 10, toujours disponible
 		Missile(const Missile& m) : Missile(m.position_x, m.position_y, m.rotation, m.degats){};
 		~Missile(){};
 
-		void move();
-
-		int get_x() const {return position_x;}
-		int get_y() const {return position_y;}
-		int get_rot() const {return rotation;}
-		int get_dmg() const {return degats;}
-
-	
-	private:
-		int position_x;
-		int position_y;
-		int vitesse;
-		int degats;
-		int rotation;
 };

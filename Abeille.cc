@@ -144,7 +144,7 @@ std::string Abeille::get_texture() const {return str_texture;}
 sf::Sprite  Abeille::get_sprite()  const {return sprite;}
 
 /*
- * Syncronise les coordonées du sprite (affichage) avec celles de l'objet
+ * Synchronise les coordonées du sprite (affichage) avec celles de l'objet
  */
 void Abeille::update_pos(){sprite.setPosition(position_x, position_y);}
 

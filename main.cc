@@ -122,6 +122,16 @@ int main()
 	            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
 	            sound.play();
 	        }
+	        
+	        // Lancement de gelee royale
+	        /*
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+	         	if (gelee.is_available()) {
+
+	         	}
+	         	else gelee.set_available(gelee.get_disponibilite() + 10);
+	        }
+			*/
 	    }
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
@@ -130,7 +140,7 @@ int main()
         // On compte 15 frames avant de changer l'affichage de l'abeille (une demi-seconde)
         joueur.animate(animation);
         
-        window.clear(sf::Color(255, 255, 255, 255));            // Netoyage de la fenêtre
+        window.clear(sf::Color(255, 255, 255, 255));            // Nettoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
 
         // Affichage des Missiles
