@@ -20,6 +20,12 @@ class Projectile {
 		int get_dmg() const {return degats;}
 		int get_disponibilite() const {return disponibilite;}
 		inline bool is_available() const {return (disponibilite == 100);}
+		sf::Sprite get_sprite() {return projectile;}
+
+		void update_sprite(){
+            projectile.setRotation(rotation);                          // Rotation des missiles
+            projectile.setPosition(position_x, position_y);        // Mise à jour de la position du sprite (affichage)
+		}
 
 	
 	protected:
@@ -29,4 +35,6 @@ class Projectile {
 		int degats;
 		int rotation;
 		int disponibilite; // entre 0 et 100, 100 si dispo
+		sf::Texture projectile_texture;
+		sf::Sprite projectile;
 };

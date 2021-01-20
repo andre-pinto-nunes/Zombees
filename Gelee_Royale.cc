@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Projectile.hh"
 #include "Gelee_Royale.hh"
-
+/*
 void Gelee_Royale::update_sprite(){
 	switch (disponibilite) {
 		case 10:
@@ -39,3 +39,4 @@ void Gelee_Royale::update_sprite(){
 			break;
 	}
 }
+*/

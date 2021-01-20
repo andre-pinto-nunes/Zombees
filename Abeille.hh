@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Missile.hh"
+#include <vector>
 #include <string>
 
 class Abeille {
@@ -21,15 +22,17 @@ class Abeille {
 		 */
 		~Abeille(){};
 
+		virtual int tir()=0;
+
 		/*
 		 * Déplacement automatique
 		 */
-		virtual void move()=0;
+		virtual void move(int x, int y)=0;
 
 		/*
 		 * Déplace l'abeille
 		 */
-		void move(int x, int y);
+//		void move(int x, int y);
 
 		/*
 		 * Change la texture de l'abeille periodiquement
@@ -122,7 +125,7 @@ class Abeille {
 		sf::IntRect anim1;
         sf::IntRect anim2;
 		sf::Sprite sprite;
-		sf::Texture texture;
 		std::string str_texture;
+		sf::Texture texture;
 
 };

@@ -4,8 +4,12 @@
 
 class Missile : public Projectile {
 	public:
-		Missile(int x, int y, int rot, int dmg) : Projectile(x, y, 10, rot, dmg, 100) {}; // vitesse de 10, toujours disponible
-		Missile(const Missile& m) : Missile(m.position_x, m.position_y, m.rotation, m.degats){};
+		Missile(int x, int y, int rot, int dmg);
+		Missile(const Missile& m);
 		~Missile(){};
-
+/*
+	private:
+		sf::Sprite sprite;
+		sf::Texture texture;
+*/
 };

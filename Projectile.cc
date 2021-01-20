@@ -14,3 +14,4 @@ void Projectile::move(){
 	if (rotation == 180) 	position_y -= vitesse;
 	else 					position_y += vitesse;
 }
+

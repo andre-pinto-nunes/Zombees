@@ -4,21 +4,57 @@
 
 class Abeille_Normale : public Abeille{
 	public:
-		Abeille_Normale() : Abeille(){
-			texture.loadFromFile("img/abeille_HP.png");           // Chargement de la texture à partir d'un fichier
-			sprite = sf::Sprite(texture);
-			sprite.setPosition(position_x, position_y);
-			str_texture = "img/abeille_HP.png";
-			rotation = 0;
-		};
+
+		/*
+		 * Constructeur
+		 */
+		Abeille_Normale();
+
+		/*
+		 * Destructeur
+		 */
 		~Abeille_Normale(){};
 
-		void move(int x, int y){
-			this->Abeille::move(x, y);
-			update_pos();
-		};
+		/*
+		 * Déplace l'abeille
+		 */
+		void move(int x, int y);
 
-		void move(){};
+		/*
+		 * Indique si l'abeille peut tirer
+		 */
+		int tir();
 
+		/*
+		 * Charge la barre de gelée de 1 point
+		 */
+		void incremente_chargement();
 
+		/*
+		 * Renvoie le sprite de la barre de chargement
+		 */
+		sf::Sprite get_chargement() const;
+
+		/*
+		 * Indique si la barre de gelée est chargée
+		 */
+		int get_gelee_chargee() const;
+		
+		/*
+		 * Remet le chargement de la gelee à 0 et met à jour le sprite
+		 */
+		void reset_gelee();
+		
+		/*
+		 * Met à jour le sprite du chargement de gelee
+		 */
+		void update_chargement();
+
+	private:
+
+		int chargement_gelee;
+		int gelee_chargee;
+		int cooldown_tir;
+		sf::Sprite sprite_chargement;
+		sf::Texture texture_chargement;
 };

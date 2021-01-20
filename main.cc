@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <vector>
 #include <deque>
@@ -8,26 +9,36 @@
 #include "Abeille_Zombie_Normale.hh"
 #include "Abeille_Zombie_Super.hh"
 #include "Missile.hh"
+#include "Gelee_Royale.hh"
+#include "Projectile.hh"
 
 int main()
 {
 
+    sf::Music music;
+    music.openFromFile("musique.wav");
+    music.setLoop(true);
+
     sf::Image icon;
 	icon.loadFromFile("img/beewan.png");
 
-	// Son missile
-	sf::SoundBuffer missilebuffer;
+    // Son missile
+    sf::SoundBuffer missilebuffer;
     missilebuffer.loadFromFile("missile.wav");
 
-    sf::Sound sound;
-	sound.setBuffer(missilebuffer);
-	
+    sf::Sound sound_missile;
+    sound_missile.setBuffer(missilebuffer);
+    
+    // Son gelee
+    sf::SoundBuffer geleebuffer;
+    geleebuffer.loadFromFile("vomi.wav");
+
+    sf::Sound sound_gelee;
+    sound_gelee.setBuffer(geleebuffer);
+    
 
     // Compteur de frames pour l'animation
 	int animation = 0;
-
-    // Compteur de frames pour la vitesse de tir
-    int cooldown_tir = 1;
 
     // Dimensions de la fenêtre
     int const taille_fenetre_X = 450;
@@ -35,6 +46,9 @@ int main()
 
     // Ensemble des missiles dans le jeu
     std::vector<std::pair<Missile, sf::Sprite>> map_des_missiles;
+
+    // Ensemble des gelees dans le jeu
+    std::vector<std::pair<Gelee_Royale, sf::Sprite>> map_des_gelees;
 
     // Ensemble des abeilles dans le jeu
     std::vector<std::deque<Abeille_Zombie>> map_des_abeilles;
@@ -68,6 +82,19 @@ int main()
     sf::Texture missile_texture;                          // Création d'une texture
     missile_texture.loadFromFile("img/missile.png");          // Chargement de la texture à partir d'un fichier
 
+    // Missiles Forts
+    sf::Texture missile_fort_texture;                          // Création d'une texture
+    missile_fort_texture.loadFromFile("img/missile_fort.png");          // Chargement de la texture à partir d'un fichier
+
+
+    // Gelee
+    sf::Texture gelee_texture;                          // Création d'une texture
+    gelee_texture.loadFromFile("img/gelee.png");          // Chargement de la texture à partir d'un fichier
+
+    // Chargement
+    sf::Texture chargement;                          // Création d'une texture
+    chargement.loadFromFile("img/mana.png");          // Chargement de la texture à partir d'un fichier
+
 
 	// Victoire
     sf::Texture victoire_texture;                         // Création d'une texture
@@ -96,7 +123,8 @@ int main()
     
     // Booléen : indique si la fenêtre est sélectionnée
     bool focus = true;
-    
+    window.requestFocus();
+            music.play();
     while (window.isOpen())
     {
         sf::Event event;
@@ -117,10 +145,10 @@ int main()
 	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) and joueur.get_x() < taille_fenetre_X - 50)	joueur.move( 1,  0); // Déplacement vers la droite
 
 	        // Lancement d'un dard
-	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and !(--cooldown_tir)){
-	            map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
-	            cooldown_tir = 30/joueur.get_vitesse_de_attaque();
-	            sound.play();
+	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) and joueur.tir()){
+                map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()), sf::Sprite(missile_texture)));
+	            //map_des_missiles.push_back(Missile(joueur.get_x() + 34,joueur.get_y(),180, joueur.get_degats()));
+	            sound_missile.play();
 	        }
 	        
 	        // Lancement de gelee royale
@@ -132,6 +160,11 @@ int main()
 	         	else gelee.set_available(gelee.get_disponibilite() + 10);
 	        }
 			*/
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) and joueur.get_gelee_chargee()){
+                joueur.reset_gelee();
+                map_des_gelees.push_back(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_x() + 34,joueur.get_y()), sf::Sprite(gelee_texture)));
+                sound_gelee.play();
+            }
 	    }
 
         // Le compteur animation est incrémenté à chaque frame (à 30 FPS)
@@ -143,20 +176,38 @@ int main()
         window.clear(sf::Color(255, 255, 255, 255));            // Nettoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
 
+
         // Affichage des Missiles
         for (std::vector<std::pair<Missile, sf::Sprite>>::iterator i = map_des_missiles.begin(); i != map_des_missiles.end(); ++i)
         {
-        	if ((i->first).get_y() < -10 || (i->first).get_y() > taille_fenetre_Y)	// suppression des missiles qui quittent la fenêtre
-        	{
-        		map_des_missiles.erase(i);
-        		i--;
-        		continue;
-        	}
+            if ((i->first).get_y() < -10 || (i->first).get_y() > taille_fenetre_Y)  // suppression des missiles qui quittent la fenêtre
+            {
+                map_des_missiles.erase(i);
+                i--;
+                continue;
+            }
 
-            (i->second).setRotation((i->first).get_rot());    						// Rotation des missiles
-            (i->first).move();														// Déplacement du missile à chaque frame
-            (i->second).setPosition((i->first).get_x(), (i->first).get_y());    	// Mise à jour de la position du sprite (affichage)
-            window.draw(i->second);													// Affichage du missile
+            (i->second).setRotation((i->first).get_rot());                          // Rotation des missiles
+            (i->first).move();                                                      // Déplacement du missile à chaque frame
+            (i->second).setPosition((i->first).get_x(), (i->first).get_y());        // Mise à jour de la position du sprite (affichage)
+            window.draw(i->second);                                                 // Affichage du missile
+        }
+        
+
+        // Affichage des Gelees
+        for (std::vector<std::pair<Gelee_Royale, sf::Sprite>>::iterator i = map_des_gelees.begin(); i != map_des_gelees.end(); ++i)
+        {
+            if ((i->first).get_y() < -10 || (i->first).get_y() > taille_fenetre_Y)  // suppression des missiles qui quittent la fenêtre
+            {
+                map_des_gelees.erase(i);
+                i--;
+                continue;
+            }
+
+            (i->second).setRotation((i->first).get_rot());                          // Rotation des missiles
+            (i->first).move();                                                      // Déplacement du missile à chaque frame
+            (i->second).setPosition((i->first).get_x(), (i->first).get_y());        // Mise à jour de la position du sprite (affichage)
+            window.draw(i->second);                                                 // Affichage du missile
         }
 
         // Affichage des abeilles
@@ -165,9 +216,17 @@ int main()
         	for (std::deque<Abeille_Zombie>::iterator j = i->begin(); j != i->end(); ++j)
         	{
 	            j->animate(animation);												// Animation des abeilles
-	            if (!jeu_fini) j->move();											// Déplacement des abeilles
+	            if (!jeu_fini) j->move(0,0);       									// Déplacement des abeilles
 	            j->update_pos();													// Mise à jour de la position du sprite
 	            j->update_tex();													// Mise à jour de la texture
+
+                if (j->tir() && !jeu_fini){
+                    if (j->get_degats()<15)
+                        map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(j->get_x() - 34,j->get_y(), 0, j->get_degats()), sf::Sprite(missile_texture)));
+                    else
+                        map_des_missiles.push_back(std::pair<Missile, sf::Sprite>(Missile(j->get_x() - 34,j->get_y(), 0, j->get_degats()), sf::Sprite(missile_fort_texture)));
+                }
+
 		    	window.draw(j->get_sprite());                                   	// Affichage de l'abeille
 	            if (*j == joueur)	jeu_fini = 2;									// Si le joueur touche un zombie, il perd
 
@@ -185,41 +244,66 @@ int main()
 		            	continue;
 		            }
 	            */
-
+                
+                // Verification des colisions
 	            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
-    			{
-    				// Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
-    				if (*j == k->first)
-    				{
-    					// Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
-    					j->perte_points_de_vie((k->first).get_dmg());
+                {
+                    // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
+                    if (*j == k->first)
+                    {
+                        // Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
+                        j->perte_points_de_vie((k->first).get_dmg());
 
-    					// Si un missile touche un enemi, le missile disparait
-    					map_des_missiles.erase(k);
-    					k--;
+                        // Si un missile touche un enemi, le missile disparait
+                        map_des_missiles.erase(k);
+                        k--;
 
-    					// Si l'ennemi arrive à 0 PV, il meurt et on l'enleve de l'ensemble
-    					if (j->dead())
-    					{
+                        // si le joueur touche un enemi, il charge la gelee
+                        joueur.incremente_chargement();
 
-    						// Si un zombie meurt, la fin alternative n'est plus disponible
-	    					fin_alternative = 0;
+                        // Si l'ennemi arrive à 0 PV, il meurt et on l'enleve de l'ensemble
+                        if (j->dead())
+                        {
+                            // Si le joueur tue, il charge +4 gelée (en plus de l'incrementation derivee du tir) 
+                            for (int u = 0; u < 4; ++u)
+                                joueur.incremente_chargement();
 
-	    					// Si l'élément à éliminer est le premier, on l'élimine et on passe au prochain tour de boucle
-	    					if ( j == (i->begin()))
-			            	{
-			            		i->pop_front();
-			            		break;
-			            	}
+                            // Si un zombie meurt, la fin alternative n'est plus disponible
+                            fin_alternative = 0;
 
-	    					// Si l'élément à éliminer n'est pas le premier, on l'élimine et on décrémente l'itérateur avant de passer au prochain tour de boucle
-			            	i->erase(j);
-			            	j--;
-			            	break;
-    					}
-    				}
-		        }
+                            // Si l'élément à éliminer est le premier, on l'élimine et on passe au prochain tour de boucle
+                            if ( j == (i->begin()))
+                            {
+                                i->pop_front();
+                                break;
+                            }
+
+                            // Si l'élément à éliminer n'est pas le premier, on l'élimine et on décrémente l'itérateur avant de passer au prochain tour de boucle
+                            i->erase(j);
+                            j--;
+                            break;
+                        }
+                    }
+                }
         	}
+
+            // Verification des colisions avec le joueur
+            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
+            {
+                // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
+                if (joueur == k->first)
+                {
+                    // Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
+                    joueur.perte_points_de_vie((k->first).get_dmg());
+
+                    // Si un missile touche le joueur, le missile disparait
+                    map_des_missiles.erase(k);
+                    k--;
+
+                    if (joueur.dead())
+                        jeu_fini = 2;
+                }
+            }
 
         	if (i->empty())
         	{
@@ -233,6 +317,7 @@ int main()
         
         // Affichage du joueur
         window.draw(joueur.get_sprite());                                   // Affichage de l'abeille
+        window.draw(joueur.get_chargement());                                   // Affichage de l'abeille
 
         // Jeu_fini = 1 -> Victoire ;  Jeu_fini = 2 -> Défaite
     	if (jeu_fini == 1)		window.draw(victoire);

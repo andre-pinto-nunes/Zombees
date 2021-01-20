@@ -19,6 +19,8 @@ Abeille::Abeille(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg){
 /*
  * Déplace l'abeille
  */
+/*
+
 void Abeille::move(int x, int y){
 	if (x<0)
 	{
@@ -35,6 +37,9 @@ void Abeille::move(int x, int y){
 	}
 }
 
+*/
+
+
 /*
  * Change la texture de l'abeille periodiquement
  */
@@ -46,7 +51,6 @@ void Abeille::animate(int anim) {
 		sprite.setTextureRect(anim2);
 	}
 }
-
 
 /*
  * Vérifie si l'abeille touche une abeille ennemie
@@ -89,9 +93,18 @@ bool Abeille::operator==(Missile const& a) const{
 	// Pas de friendly fire
 	if (a.get_rot() != rotation) return 0;
 
-	if (a.get_x() < position_x - 30 || a.get_x() > position_x) return 0;
+	if (rotation)
+	{
+		if (a.get_x() < position_x - 30 || a.get_x() > position_x     ) return 0;
 
-	if (a.get_y() < position_y - 50 || a.get_y() > position_y + 10) return 0;
+		if (a.get_y() < position_y - 50 || a.get_y() > position_y + 10) return 0;
+	}
+	else
+	{
+		if (a.get_x() < position_x      || a.get_x() > position_x + 30) return 0;
+
+		if (a.get_y() < position_y - 20 || a.get_y() > position_y + 40) return 0;
+	}
 
 	// Il y a une collision seulement si le missile touche le corps de l'abeille (pas les ailes)
 	return 1;
