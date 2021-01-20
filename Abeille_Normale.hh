@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Abeille.hh"
+#include "Gelee_Royale.hh"
 
 class Abeille_Normale : public Abeille{
 	public:
@@ -41,6 +42,16 @@ class Abeille_Normale : public Abeille{
 		int get_gelee_chargee() const;
 		
 		/*
+		 * Renvoie le nombre de charges
+		 */
+		int get_charges() const;
+
+		/*
+		 * Decremente le nombre de charges
+		 */
+		void decremente_charges();
+		
+		/*
 		 * Remet le chargement de la gelee à 0 et met à jour le sprite
 		 */
 		void reset_gelee();
@@ -50,6 +61,7 @@ class Abeille_Normale : public Abeille{
 		 */
 		void update_chargement();
 
+
 	private:
 
 		int chargement_gelee;
@@ -57,4 +69,5 @@ class Abeille_Normale : public Abeille{
 		int cooldown_tir;
 		sf::Sprite sprite_chargement;
 		sf::Texture texture_chargement;
+		int charges;
 };

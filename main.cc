@@ -52,6 +52,9 @@ int main()
 
     // Ensemble des abeilles dans le jeu
     std::vector<std::deque<Abeille_Zombie>> map_des_abeilles;
+
+    // Ensemble des charges de gelee
+    std::deque<std::pair<Gelee_Royale, sf::Sprite>> stack_gelee;
 	
 	// Initialisation de l'ensemble des abeilles
     for (int i = 0; i < 8; ++i){
@@ -123,8 +126,11 @@ int main()
     
     // Booléen : indique si la fenêtre est sélectionnée
     bool focus = true;
+    
+    int gelee_cooldown = 0;
+
     window.requestFocus();
-            music.play();
+    music.play();
     while (window.isOpen())
     {
         sf::Event event;
@@ -160,10 +166,25 @@ int main()
 	         	else gelee.set_available(gelee.get_disponibilite() + 10);
 	        }
 			*/
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) and joueur.get_gelee_chargee()){
-                joueur.reset_gelee();
-                map_des_gelees.push_back(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_x() + 34,joueur.get_y()), sf::Sprite(gelee_texture)));
-                sound_gelee.play();
+            if (gelee_cooldown>0)
+                gelee_cooldown--;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)){
+                if (!gelee_cooldown)
+                {
+                    if (joueur.get_charges() == 3 and joueur.get_gelee_chargee()){
+                        joueur.reset_gelee();
+                        map_des_gelees.push_back(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_x() + 34,joueur.get_y()), sf::Sprite(gelee_texture)));
+                        sound_gelee.play();
+                    }else if (joueur.get_charges() > 0){
+                        joueur.decremente_charges();
+                        stack_gelee.pop_front();
+                        map_des_gelees.push_back(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_x() + 34,joueur.get_y()), sf::Sprite(gelee_texture)));
+                        sound_gelee.play();
+                    }
+                    gelee_cooldown = 30;
+                }
+
             }
 	    }
 
@@ -245,8 +266,8 @@ int main()
 		            }
 	            */
                 
-                // Verification des colisions
-	            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
+                // Verification des colisions Missiles
+                for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
                 {
                     // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
                     if (*j == k->first)
@@ -285,25 +306,38 @@ int main()
                         }
                     }
                 }
-        	}
-
-            // Verification des colisions avec le joueur
-            for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
-            {
-                // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
-                if (joueur == k->first)
+                // Verification des colisions Gelee
+                for (std::vector<std::pair<Gelee_Royale, sf::Sprite>>::iterator k = map_des_gelees.begin(); k != map_des_gelees.end(); ++k)
                 {
-                    // Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
-                    joueur.perte_points_de_vie((k->first).get_dmg());
+                    // Pour chaque Zombie et pour chaque gelee, on vérifie s'il y a une collision (si zombie == gelee)
+                    if (*j == k->first)
+                    {
+                        // Si une gelee touche un enemi, il perd des PV qui correspondent aux dégats de la gelee
+                        j->perte_points_de_vie((k->first).get_dmg());
 
-                    // Si un missile touche le joueur, le missile disparait
-                    map_des_missiles.erase(k);
-                    k--;
+                        // Si une gelee touche un enemi, le gelee ne disparait pas
 
-                    if (joueur.dead())
-                        jeu_fini = 2;
+                        // Si l'ennemi arrive à 0 PV, il meurt et on l'enleve de l'ensemble
+                        if (j->dead())
+                        {
+                            // Si un zombie meurt, la fin alternative n'est plus disponible
+                            fin_alternative = 0;
+
+                            // Si l'élément à éliminer est le premier, on l'élimine et on passe au prochain tour de boucle
+                            if ( j == (i->begin()))
+                            {
+                                i->pop_front();
+                                break;
+                            }
+
+                            // Si l'élément à éliminer n'est pas le premier, on l'élimine et on décrémente l'itérateur avant de passer au prochain tour de boucle
+                            i->erase(j);
+                            j--;
+                            break;
+                        }
+                    }
                 }
-            }
+        	}
 
         	if (i->empty())
         	{
@@ -311,6 +345,35 @@ int main()
             	i--;
         	}
         }
+
+        // Mise a jour des charges de gelee (suite aux colisions)
+        if ((int)stack_gelee.size() < joueur.get_charges())
+            stack_gelee.push_front(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_charges()*20,800), sf::Sprite(gelee_texture)));
+        
+
+        for (std::deque<std::pair<Gelee_Royale, sf::Sprite>>::iterator i = stack_gelee.begin(); i != stack_gelee.end(); ++i){
+            (i->second).setPosition((i->first).get_x(), (i->first).get_y());        // Mise à jour de la position du sprite (affichage)
+            window.draw(i->second);
+        }
+
+        // Verification des colisions avec le joueur
+        for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
+        {
+            // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
+            if (joueur == k->first)
+            {
+                // Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
+                joueur.perte_points_de_vie((k->first).get_dmg());
+
+                // Si un missile touche le joueur, le missile disparait
+                map_des_missiles.erase(k);
+                k--;
+
+                if (joueur.dead())
+                    jeu_fini = 2;
+            }
+        }
+
 
         // Si toutes les abeilles ont été tuées => victoire
         if (map_des_abeilles.empty()) jeu_fini = 1;

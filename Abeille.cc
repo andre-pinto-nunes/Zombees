@@ -88,7 +88,7 @@ bool Abeille::operator==(Abeille const& a) const{
 /*
  * Vérifie si l'abeille touche un missile
  */
-bool Abeille::operator==(Missile const& a) const{
+bool Abeille::operator==(Projectile const& a) const{
 
 	// Pas de friendly fire
 	if (a.get_rot() != rotation) return 0;

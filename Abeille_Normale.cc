@@ -14,6 +14,7 @@ Abeille_Normale::Abeille_Normale() : Abeille(){
 	gelee_chargee = 0;
 	chargement_gelee = 0;
 	cooldown_tir = 1;
+	charges = 0;
 	
 	// Init Mana
 	texture_chargement.loadFromFile("img/mana.png");           
@@ -61,9 +62,19 @@ void Abeille_Normale::incremente_chargement(){
 	if (++chargement_gelee > 19){
 		chargement_gelee = 19;
 		gelee_chargee = 1;
+		if (charges < 3){
+			charges++;
+			Abeille_Normale::reset_gelee();
+		}
 	}
+
 	update_chargement();
 }
+
+/*
+ * Decremente le nombre de charges
+ */
+void Abeille_Normale::decremente_charges() {--charges;}
 
 /*
  * Renvoie le sprite de la barre de chargement
@@ -74,6 +85,11 @@ sf::Sprite Abeille_Normale::get_chargement() const {return sprite_chargement;};
  * Indique si la barre de gelée est chargée
  */
 int Abeille_Normale::get_gelee_chargee() const {return gelee_chargee;}
+
+/*
+ * Renvoie le nombre de charges
+ */
+int Abeille_Normale::get_charges() const {return charges;}
 
 /*
  * Remet le chargement de la gelee à 0 et met à jour le sprite
