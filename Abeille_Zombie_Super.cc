@@ -2,11 +2,15 @@
 
 
 Abeille_Zombie_Super::Abeille_Zombie_Super(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg) : Abeille_Zombie(x, y, pv, atk_spd, mvmt_spd, dmg){
-			texture = sf::Texture();
-			texture.loadFromFile("img/super_zombie_HP.png");           // Chargement de la texture à partir d'un fichier
+
+			// Chargement de la texture à partir d'un fichier
+			texture.loadFromFile("img/super_zombie_HP.png");
+
+			// Création d'un sprite à partir d'une texture
 			sprite = sf::Sprite(texture);
-			sprite.setRotation(rotation);
-			str_texture = "img/super_zombie_HP.png";
+			
+			// Rotation du sprite
+			sprite.setRotation(rotation);			
 			probabilite_de_tir = 4;
 }
 

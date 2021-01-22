@@ -7,9 +7,4 @@ class Missile : public Projectile {
 		Missile(int x, int y, int rot, int dmg);
 		Missile(const Missile& m);
 		~Missile(){};
-/*
-	private:
-		sf::Sprite sprite;
-		sf::Texture texture;
-*/
 };

@@ -3,29 +3,41 @@
 
 class Projectile {
 	public:
-		Projectile() : 	position_x(-1),
-						position_y(-1),
-						vitesse(0),
-						degats(0),
-						rotation(0),
-						disponibilite(0){};
-		Projectile(int x, int y, int vit, int rot, int dmg, int dispo);
+		Projectile(int x, int y, int vit, int rot, int dmg);
+		Projectile();
 		~Projectile(){};
 
 		void move();
 
-		int get_x() const {return position_x;}
-		int get_y() const {return position_y;}
-		int get_rot() const {return rotation;}
-		int get_dmg() const {return degats;}
-		int get_disponibilite() const {return disponibilite;}
-		inline bool is_available() const {return (disponibilite == 100);}
-		sf::Sprite get_sprite() {return projectile;}
+		/*
+		 * Renvoie la position X du projectile
+		 */
+		int get_x() const;
 
-		void update_sprite(){
-            projectile.setRotation(rotation);                          // Rotation des missiles
-            projectile.setPosition(position_x, position_y);        // Mise à jour de la position du sprite (affichage)
-		}
+		/*
+		 * Renvoie la position Y du projectile
+		 */
+		int get_y() const;
+
+		/*
+		 * Renvoie la rotation du projectile
+		 */
+		int get_rot() const;
+
+		/*
+		 * Renvoie les dégats du projectile
+		 */
+		int get_dmg() const;
+
+		/*
+		 * Renvoie le sprite du projectile
+		 */
+		sf::Sprite get_sprite();
+		
+		/*
+ 		 * Met à jour le sprite du projectile
+ 		 */
+		void update_sprite();
 
 	
 	protected:
@@ -34,7 +46,6 @@ class Projectile {
 		int vitesse;
 		int degats;
 		int rotation;
-		int disponibilite; // entre 0 et 100, 100 si dispo
 		sf::Texture projectile_texture;
 		sf::Sprite projectile;
 };
