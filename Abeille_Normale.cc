@@ -107,3 +107,7 @@ void Abeille_Normale::update_chargement() {
 	sprite_chargement.setPosition(position_x, position_y + 5);
 	sprite_chargement.setTextureRect(sf::IntRect(0, 817 - (chargement_gelee * 43), 50, 43));
 }
+
+void Abeille_Normale::operator+=(int a){
+	points_de_vie += a;
+}

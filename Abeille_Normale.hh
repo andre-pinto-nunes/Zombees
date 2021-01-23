@@ -61,6 +61,11 @@ class Abeille_Normale : public Abeille{
 		 */
 		void update_chargement();
 
+		/*
+		 * Soigne l'abeille
+		 */
+		void operator+=(int a);
+
 
 	private:
 

@@ -88,7 +88,7 @@ bool Abeille::operator==(Abeille const& a) const{
 /*
  * Vérifie si l'abeille touche un missile
  */
-bool Abeille::operator==(Projectile const& a) const{
+bool Abeille::operator==(Missile const& a) const{
 
 	// Pas de friendly fire
 	if (a.get_rot() != rotation) return 0;
@@ -202,6 +202,7 @@ void Abeille::update_pv(){
     	anim2 = sf::IntRect(0,  0, 50, 43);
 	}
 }
+
 
 /*
  * Indique si l'abeille est morte

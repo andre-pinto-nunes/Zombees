@@ -47,7 +47,7 @@ class Abeille {
 		/*
 		 * Vérifie si l'abeille touche un missile
 		 */
-		bool operator==(Projectile const& a) const;
+		bool operator==(Missile const& a) const;
 
 		/*
 		 * Renvoie la valeur de position_x

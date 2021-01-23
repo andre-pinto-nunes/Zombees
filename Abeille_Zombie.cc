@@ -1,8 +1,12 @@
 #include "Abeille_Zombie.hh"
 
+int Abeille_Zombie::compteur_de_zombies = 0;
 
 Abeille_Zombie::Abeille_Zombie(int x, int y, int pv, int atk_spd, int mvmt_spd, int dmg) : Abeille(x, y, pv, atk_spd, mvmt_spd, dmg){
 	
+	// chaque zombie a un id different
+	id = compteur_de_zombies++;
+
 	// Toutes les abeilles Zombies sont tournées vers la bas (le sprite devra être tourné de 180º)
 	rotation = 180;
 
@@ -16,7 +20,10 @@ Abeille_Zombie::Abeille_Zombie(int x, int y, int pv, int atk_spd, int mvmt_spd, 
 	srand( (unsigned)time(NULL) );
 }
 
-Abeille_Zombie::Abeille_Zombie() : Abeille(){};
+Abeille_Zombie::Abeille_Zombie() : Abeille(){
+	id = compteur_de_zombies++;
+
+};
 Abeille_Zombie::~Abeille_Zombie(){};
 
 /*
@@ -57,3 +64,43 @@ int Abeille_Zombie::tir(){
 
 	return 0;
 }
+
+
+int Abeille_Zombie::get_id() const{return id;};
+
+bool Abeille_Zombie::operator==(Gelee_Royale const& a) const{
+
+	// Pas de friendly fire
+	if (a.get_rot() != rotation) return 0;
+
+	// Condition de colision sur l'axe horizontal
+	if (a.get_x() < position_x - 30 || a.get_x() > position_x     ) return 0;
+
+	// Condition de colision sur l'axe vertical
+	if (a.get_y() < position_y - 50 || a.get_y() > position_y + 10) return 0;
+
+	// Si on arrive sur cette ligne, le zombie est en contact avec la gelée
+
+	// Si la gelée a deja infligé des degats au zombie, il n'y a pas de nouvelle colision
+	std::vector<int> v = a.get_vecteur();
+	for (std::vector<int>::iterator i = v.begin(); i != v.end(); ++i)
+		if (*i == id)
+			return 0;
+
+	return 1;
+}
+
+
+/*
+ * Vérifie si l'abeille touche une abeille ennemie
+ */
+bool Abeille_Zombie::operator==(Abeille const& a) const{
+	return Abeille::operator==(a);
+};
+
+/*
+ * Vérifie si l'abeille touche un missile
+ */
+bool Abeille_Zombie::operator==(Missile const& a) const{
+	return Abeille::operator==(a);
+};

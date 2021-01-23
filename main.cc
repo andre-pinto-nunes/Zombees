@@ -36,6 +36,13 @@ int main()
     sf::Sound sound_gelee;
     sound_gelee.setBuffer(geleebuffer);
     
+    // Son manger
+    sf::SoundBuffer mangerbuffer;
+    mangerbuffer.loadFromFile("son_manger.wav");
+
+    sf::Sound sound_manger;
+    sound_manger.setBuffer(mangerbuffer);
+    
 
     // Compteur de frames pour l'animation
 	int animation = 0;
@@ -91,30 +98,37 @@ int main()
 
 
     // Gelee
-    sf::Texture gelee_texture;                          // Création d'une texture
+    sf::Texture gelee_texture;                            // Création d'une texture
     gelee_texture.loadFromFile("img/gelee.png");          // Chargement de la texture à partir d'un fichier
 
     // Chargement
-    sf::Texture chargement;                          // Création d'une texture
-    chargement.loadFromFile("img/mana.png");          // Chargement de la texture à partir d'un fichier
+    sf::Texture chargement;                               // Création d'une texture
+    chargement.loadFromFile("img/mana.png");              // Chargement de la texture à partir d'un fichier
+
+
+    // Stack_gelee
+    sf::Texture stack_gel;                                // Création d'une texture
+    stack_gel.loadFromFile("img/stack_gelee.png");        // Chargement de la texture à partir d'un fichier
+    sf::Sprite stack_gel_sprite(stack_gel);               // Création d'une forme et application de la texture
+    stack_gel_sprite.setPosition(10, 792);                // Positionnement
 
 
 	// Victoire
     sf::Texture victoire_texture;                         // Création d'une texture
-    victoire_texture.loadFromFile("img/victoire.png");        // Chargement de la texture à partir d'un fichier
+    victoire_texture.loadFromFile("img/victoire.png");    // Chargement de la texture à partir d'un fichier
     sf::Sprite victoire(victoire_texture);                // Création d'une forme et application de la texture
     victoire.setPosition(25, 350);						  // Positionnement
 
 
 	// Défaite
     sf::Texture defaite_texture;                          // Création d'une texture
-    defaite_texture.loadFromFile("img/defaite.png");          // Chargement de la texture à partir d'un fichier
+    defaite_texture.loadFromFile("img/defaite.png");      // Chargement de la texture à partir d'un fichier
     sf::Sprite defaite(defaite_texture);                  // Création d'une forme et application de la texture
     defaite.setPosition(25, 350);						  // Positionnement
 
 	// Traître
     sf::Texture traitre_texture;                          // Création d'une texture
-    traitre_texture.loadFromFile("img/traitre_v2.png");       // Chargement de la texture à partir d'un fichier
+    traitre_texture.loadFromFile("img/traitre_v2.png");   // Chargement de la texture à partir d'un fichier
     sf::Sprite traitre(traitre_texture);                  // Création d'une forme et application de la texture
     traitre.setPosition(0, 310);						  // Positionnement
     
@@ -157,19 +171,11 @@ int main()
 	            sound_missile.play();
 	        }
 	        
-	        // Lancement de gelee royale
-	        /*
-	        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-	         	if (gelee.is_available()) {
-
-	         	}
-	         	else gelee.set_available(gelee.get_disponibilite() + 10);
-	        }
-			*/
             if (gelee_cooldown>0)
                 gelee_cooldown--;
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)){
+            // Tir de gelée
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) ){
                 if (!gelee_cooldown)
                 {
                     if (joueur.get_charges() == 3 and joueur.get_gelee_chargee()){
@@ -184,7 +190,24 @@ int main()
                     }
                     gelee_cooldown = 30;
                 }
+            }
 
+            // Manger la gelee
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)){
+                if (!gelee_cooldown)
+                {
+                    if (joueur.get_charges() == 3 and joueur.get_gelee_chargee()){
+                        joueur.reset_gelee();
+                        joueur += 10;
+                        sound_manger.play();
+                    }else if (joueur.get_charges() > 0){
+                        joueur.decremente_charges();
+                        stack_gelee.pop_front();
+                        joueur += 10;
+                        sound_manger.play();
+                    }
+                    gelee_cooldown = 30;
+                }
             }
 	    }
 
@@ -196,6 +219,8 @@ int main()
         
         window.clear(sf::Color(255, 255, 255, 255));            // Nettoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
+
+        window.draw(stack_gel_sprite);                          // Affichage de la stack de gelee
 
 
         // Affichage des Missiles
@@ -270,7 +295,7 @@ int main()
                 for (std::vector<std::pair<Missile, sf::Sprite>>::iterator k = map_des_missiles.begin(); k != map_des_missiles.end(); ++k)
                 {
                     // Pour chaque Zombie et pour chaque missile, on vérifie s'il y a une collision (si zombie == missile)
-                    if (*j == k->first)
+                    if ((*j) == k->first)
                     {
                         // Si un missile touche un enemi, il perd des PV qui correspondent aux dégats du missile
                         j->perte_points_de_vie((k->first).get_dmg());
@@ -312,10 +337,12 @@ int main()
                     // Pour chaque Zombie et pour chaque gelee, on vérifie s'il y a une collision (si zombie == gelee)
                     if (*j == k->first)
                     {
+                        (k->first).nouvelle_colision(j->get_id());
+
                         // Si une gelee touche un enemi, il perd des PV qui correspondent aux dégats de la gelee
                         j->perte_points_de_vie((k->first).get_dmg());
 
-                        // Si une gelee touche un enemi, le gelee ne disparait pas
+                        // Si une gelee touche un enemi, la gelee ne disparait pas
 
                         // Si l'ennemi arrive à 0 PV, il meurt et on l'enleve de l'ensemble
                         if (j->dead())
@@ -348,7 +375,7 @@ int main()
 
         // Mise a jour des charges de gelee (suite aux colisions)
         if ((int)stack_gelee.size() < joueur.get_charges())
-            stack_gelee.push_front(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_charges()*20,800), sf::Sprite(gelee_texture)));
+            stack_gelee.push_front(std::pair<Gelee_Royale, sf::Sprite>(Gelee_Royale(joueur.get_charges()*25,800), sf::Sprite(gelee_texture)));
         
 
         for (std::deque<std::pair<Gelee_Royale, sf::Sprite>>::iterator i = stack_gelee.begin(); i != stack_gelee.end(); ++i){

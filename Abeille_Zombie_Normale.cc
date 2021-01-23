@@ -14,7 +14,7 @@ Abeille_Zombie_Normale::Abeille_Zombie_Normale(int x, int y, int pv, int atk_spd
 			probabilite_de_tir = 4;
 }
 
-Abeille_Zombie_Normale::Abeille_Zombie_Normale(int x, int y) : Abeille_Zombie_Normale(x, y, 200, 10, 8, 20){};
-Abeille_Zombie_Normale::Abeille_Zombie_Normale() : Abeille_Zombie_Normale(176, 756, 200, 10, 8, 20){};
+Abeille_Zombie_Normale::Abeille_Zombie_Normale(int x, int y) : Abeille_Zombie_Normale(x, y, 200, 10, 8, 10){};
+Abeille_Zombie_Normale::Abeille_Zombie_Normale() : Abeille_Zombie_Normale(176, 756, 200, 10, 8, 10){};
 Abeille_Zombie_Normale::~Abeille_Zombie_Normale(){};
 
