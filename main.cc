@@ -83,10 +83,16 @@ int main()
     window.setFramerateLimit(30);                                                         	// FPS = 30
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());				// Icone
 
-	// Fond d'écran
+    // Fond d'écran
     sf::Texture background_texture;                       // Création d'une texture
     background_texture.loadFromFile("img/background.png");    // Chargement de la texture à partir d'un fichier
     sf::Sprite background(background_texture);            // Création d'une forme et application de la texture
+
+
+    // Ruche
+    sf::Texture ruche_texture;                       // Création d'une texture
+    ruche_texture.loadFromFile("img/ruche.png");    // Chargement de la texture à partir d'un fichier
+    sf::Sprite ruche(ruche_texture);            // Création d'une forme et application de la texture
 
     // Missiles
     sf::Texture missile_texture;                          // Création d'une texture
@@ -219,6 +225,7 @@ int main()
         
         window.clear(sf::Color(255, 255, 255, 255));            // Nettoyage de la fenêtre
         window.draw(background);                                // Affichage du Fond d'écran
+        window.draw(ruche);                                     // Affichage de la ruche
 
         window.draw(stack_gel_sprite);                          // Affichage de la stack de gelee
 
@@ -274,7 +281,8 @@ int main()
                 }
 
 		    	window.draw(j->get_sprite());                                   	// Affichage de l'abeille
-	            if (*j == joueur)	jeu_fini = 2;									// Si le joueur touche un zombie, il perd
+                if (*j == joueur)   jeu_fini = 2;                                   // Si le joueur touche un zombie, il perd
+                if (j->get_y() > 700)   jeu_fini = 2;                               // Si les zombies arrivent au niveau de la ruche, le jeu se termine   
 
             	/*
 	            	// On tue les zombies si on les touche (pour debugger plus vite)            	
