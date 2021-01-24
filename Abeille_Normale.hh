@@ -67,6 +67,9 @@ class Abeille_Normale : public Abeille{
 		void operator+=(int a);
 
 
+		void reset();
+
+
 	private:
 
 		int chargement_gelee;

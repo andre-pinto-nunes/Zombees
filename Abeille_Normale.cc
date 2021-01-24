@@ -111,3 +111,17 @@ void Abeille_Normale::update_chargement() {
 void Abeille_Normale::operator+=(int a){
 	points_de_vie += a;
 }
+
+
+void Abeille_Normale::reset(){
+	position_x = 200;
+	position_y = 752;
+	points_de_vie = 100;
+	sprite.setPosition(position_x, position_y);			// Mise à jour de la position
+	gelee_chargee = 0;
+	chargement_gelee = 0;
+	cooldown_tir = 1;
+	charges = 0;
+	sprite_chargement.setPosition(position_x, position_y + 5);
+	sprite_chargement.setTextureRect(sf::IntRect(0, 817, 50, 43));
+};
