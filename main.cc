@@ -15,6 +15,10 @@
 int main()
 {
 
+    sf::Music intro_music;
+    intro_music.openFromFile("intro.wav");
+    intro_music.setLoop(true);
+
     sf::Music music;
     music.openFromFile("musique.wav");
     music.setLoop(true);
@@ -62,18 +66,6 @@ int main()
 
     // Ensemble des charges de gelee
     std::deque<std::pair<Gelee_Royale, sf::Sprite>> stack_gelee;
-	
-	// Initialisation de l'ensemble des abeilles
-    for (int i = 0; i < 8; ++i){
-    	std::deque<Abeille_Zombie> deque;
-    	deque.push_back(Abeille_Zombie_Super(50 + i*50, 50));
-
-    	for (int j = 0; j < 3; ++j){
-	    	deque.push_back(Abeille_Zombie_Normale(50 + i*50, (j+1)*75 + 50));    		
-    	}
-
-    	map_des_abeilles.push_back(deque);
-    }
 
     // Création d'une abeille
     Abeille_Normale joueur;
@@ -87,6 +79,18 @@ int main()
     sf::Texture background_texture;                       // Création d'une texture
     background_texture.loadFromFile("img/background.png");    // Chargement de la texture à partir d'un fichier
     sf::Sprite background(background_texture);            // Création d'une forme et application de la texture
+
+    // bouton play 1
+    sf::Texture bouton_play_1;                       // Création d'une texture
+    bouton_play_1.loadFromFile("img/play.png");    // Chargement de la texture à partir d'un fichier
+    sf::Sprite sprite_bouton_play_1(bouton_play_1);            // Création d'une forme et application de la texture
+    sprite_bouton_play_1.setPosition(25, 500);                // Positionnement
+
+    // bouton play 2
+    sf::Texture bouton_play_2;                       // Création d'une texture
+    bouton_play_2.loadFromFile("img/play_pressed.png");    // Chargement de la texture à partir d'un fichier
+    sf::Sprite sprite_bouton_play_2(bouton_play_2);            // Création d'une forme et application de la texture
+    sprite_bouton_play_2.setPosition(25, 500);                // Positionnement
 
 
     // Ruche
@@ -149,8 +153,15 @@ int main()
     
     int gelee_cooldown = 0;
 
+    int intro = 0;
+
+    int revenir = 0;
+    
+    bool start_game = false;
+    bool mouse_on_play = false;
+
     window.requestFocus();
-    music.play();
+    intro_music.play();
     while (window.isOpen())
     {
         sf::Event event;
@@ -159,6 +170,67 @@ int main()
             if (event.type == sf::Event::Closed) window.close();
             if (event.type == sf::Event::GainedFocus)	focus = true;
         	if (event.type == sf::Event::LostFocus)		focus = false;
+
+            // Si on appuie sur play, on commence le jeu
+            if (mouse_on_play && event.type == sf::Event::MouseButtonPressed){
+                start_game = true;
+                intro_music.stop();
+                music.play();
+
+                // Initialisation de l'ensemble des abeilles
+                for (int i = 0; i < 8; ++i){
+                    std::deque<Abeille_Zombie> deque;
+                    deque.push_back(Abeille_Zombie_Super(50 + i*50, 50));
+
+                    for (int j = 0; j < 3; ++j){
+                        deque.push_back(Abeille_Zombie_Normale(50 + i*50, (j+1)*75 + 50));          
+                    }
+
+                    map_des_abeilles.push_back(deque);
+                }
+            }
+
+            if (jeu_fini && event.type == sf::Event::MouseButtonPressed){
+                music.stop();
+                intro_music.play();
+                jeu_fini = 0;
+                start_game = false;
+                stack_gelee.clear();
+                map_des_abeilles.clear();
+                map_des_missiles.clear();
+                map_des_gelees.clear();
+                joueur.reset();
+                revenir = 0;
+                fin_alternative = 1;
+            }
+        }
+
+        // Video intro
+        if(!start_game){
+
+            char buffer[50];
+            sprintf(buffer,"intro/Comp 1_00%03d.png", intro++);
+
+            if (intro==360) intro = 0;
+            
+            sf::Texture intro_tex;                                // Création d'une texture
+            intro_tex.loadFromFile(buffer);        // Chargement de la texture à partir d'un fichier
+            sf::Sprite intro_sprite(intro_tex);               // Création d'une forme et application de la texture
+            window.draw(intro_sprite);
+
+            window.draw(sprite_bouton_play_1);
+            auto mouse_pos = sf::Mouse::getPosition(window); // Mouse position relative to the window
+            auto translated_pos = window.mapPixelToCoords(mouse_pos); // Mouse position translated into world coordinates
+            if(sprite_bouton_play_1.getGlobalBounds().contains(translated_pos)){ // Rectangle-contains-point check
+                mouse_on_play = true;
+                window.draw(sprite_bouton_play_2);
+            }else{
+                mouse_on_play = false;
+            }
+
+            // Affichage de la fenêtre (écran bleu de la mort si on l'oublie)
+            window.display();
+            continue;                             
         }
 
         // Tant que le jeu n'est pas fini, le joueur peut contrôler l'abeille
@@ -428,12 +500,29 @@ int main()
 	        jeu_fini = 3;
         }
 
+        if (jeu_fini){
+            
+            char buffer[50];
+            sprintf(buffer,"revenir/revenir_00%03d.png", revenir++);
+
+            if (revenir==120) revenir = 0;
+            
+            sf::Texture revenir_tex;                                // Création d'une texture
+            revenir_tex.loadFromFile(buffer);        // Chargement de la texture à partir d'un fichier
+            sf::Sprite revenir_sprite(revenir_tex);               // Création d'une forme et application de la texture
+            revenir_sprite.setPosition(0, 200);                // Positionnement
+            window.draw(revenir_sprite);
+            
+        }
+
         // Affichage de la fenêtre (écran bleu de la mort si on l'oublie)
         window.display();
     }
 
+    stack_gelee.clear();
     map_des_abeilles.clear();
     map_des_missiles.clear();
+    map_des_gelees.clear();
     return 0;
 }
 
