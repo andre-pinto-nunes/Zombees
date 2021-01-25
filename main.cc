@@ -222,11 +222,17 @@ int main()
             sf::Sprite intro_sprite(intro_tex);     // Création d'une forme et application de la texture
             window.draw(intro_sprite);              // Affichage
 
+            // On affiche le bouton play
             window.draw(sprite_bouton_play_1);
-            auto mouse_pos = sf::Mouse::getPosition(window); // Mouse position relative to the window
-            auto translated_pos = window.mapPixelToCoords(mouse_pos); // Mouse position translated into world coordinates
-            if(sprite_bouton_play_1.getGlobalBounds().contains(translated_pos)){ // Rectangle-contains-point check
+
+            auto mouse_pos = sf::Mouse::getPosition(window);                        // On recupere la position de la souris
+            auto translated_pos = window.mapPixelToCoords(mouse_pos);               // On traduit sa position en coordonées
+            if(sprite_bouton_play_1.getGlobalBounds().contains(translated_pos)){    // On verifie si la souris est sur le sprite
+
+                // On met à jour la variable qui indique que la souris est sur le sprite
                 mouse_on_play = true;
+
+                // On déssine une version differente du bouton play quand la souris est dessus
                 window.draw(sprite_bouton_play_2);
             }else{
                 mouse_on_play = false;
