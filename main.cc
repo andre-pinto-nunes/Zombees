@@ -208,15 +208,19 @@ int main()
         // Video intro
         if(!start_game){
 
+            // Nom du fichier à ouvrir
             char buffer[50];
+
+            // les noms des images commencent par 'Comp 1_00' et terminent par un nombre entre 0 et 359
             sprintf(buffer,"intro/Comp 1_00%03d.png", intro++);
 
+            // quand 'intro' dépasse 359, on le remet à 0
             if (intro==360) intro = 0;
             
-            sf::Texture intro_tex;                                // Création d'une texture
-            intro_tex.loadFromFile(buffer);        // Chargement de la texture à partir d'un fichier
-            sf::Sprite intro_sprite(intro_tex);               // Création d'une forme et application de la texture
-            window.draw(intro_sprite);
+            sf::Texture intro_tex;                  // Création d'une texture
+            intro_tex.loadFromFile(buffer);         // Chargement de la texture à partir d'un fichier
+            sf::Sprite intro_sprite(intro_tex);     // Création d'une forme et application de la texture
+            window.draw(intro_sprite);              // Affichage
 
             window.draw(sprite_bouton_play_1);
             auto mouse_pos = sf::Mouse::getPosition(window); // Mouse position relative to the window
