@@ -20,4 +20,5 @@ testcase : $(OBJ_TEST)
 	$(CC) $(CCFLAGS) -I../ -o $@ -c $<
 
 clean :
-	rm -f $(OBJ_TEST) testcase
+	rm -f $(OBJ_TEST)
+	cd ../ ; rm -f $(OBJ_TEST) $(EXEC)
