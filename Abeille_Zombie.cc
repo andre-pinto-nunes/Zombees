@@ -21,7 +21,21 @@ Abeille_Zombie::Abeille_Zombie(int x, int y, int pv, int atk_spd, int mvmt_spd, 
 }
 
 Abeille_Zombie::Abeille_Zombie() : Abeille(){
+		
+	// chaque zombie a un id different
 	id = compteur_de_zombies++;
+
+	// Toutes les abeilles Zombies sont tournées vers la bas (le sprite devra être tourné de 180º)
+	rotation = 180;
+
+	// Compteur de mouvement pour la fonction move()
+	compteur_mouvement = 0;
+
+	// Par défaut, la probabilité de tir est de 2/100
+	probabilite_de_tir = 2;
+
+	// generation d'une seed pour la fonction de tir
+	srand( (unsigned)time(NULL) );
 
 };
 Abeille_Zombie::~Abeille_Zombie(){};

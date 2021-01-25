@@ -93,6 +93,12 @@ int main()
     sprite_bouton_play_2.setPosition(25, 500);                // Positionnement
 
 
+    // Logo
+    sf::Texture logo_texture;                       // Création d'une texture
+    logo_texture.loadFromFile("img/logo.png");    // Chargement de la texture à partir d'un fichier
+    sf::Sprite logo(logo_texture);            // Création d'une forme et application de la texture
+    logo.setPosition(10, 0);                // Positionnement
+
     // Ruche
     sf::Texture ruche_texture;                       // Création d'une texture
     ruche_texture.loadFromFile("img/ruche.png");    // Chargement de la texture à partir d'un fichier
@@ -221,6 +227,8 @@ int main()
             intro_tex.loadFromFile(buffer);         // Chargement de la texture à partir d'un fichier
             sf::Sprite intro_sprite(intro_tex);     // Création d'une forme et application de la texture
             window.draw(intro_sprite);              // Affichage
+
+            window.draw(logo);  
 
             // On affiche le bouton play
             window.draw(sprite_bouton_play_1);
